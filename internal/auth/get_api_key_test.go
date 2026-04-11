@@ -12,14 +12,9 @@ func TestGetAPIKey(t *testing.T) {
 		want    string
 		wantErr bool
 	}{
-		// "valid_api_key": {
-		// 	headers: http.Header{"Authorization": []string{"ApiKey some-secret-key-123"}},
-		// 	want:    "some-secret-key-123",
-		// 	wantErr: false,
-		// },
 		"valid_api_key": {
 			headers: http.Header{"Authorization": []string{"ApiKey some-secret-key-123"}},
-			want:    "this-will-fail-the-test", // Changed this from "some-secret-key-123"
+			want:    "some-secret-key-123",
 			wantErr: false,
 		},
 		"missing_auth_header": {
