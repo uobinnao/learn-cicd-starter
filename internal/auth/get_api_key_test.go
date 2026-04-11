@@ -39,7 +39,7 @@ func TestGetAPIKey(t *testing.T) {
 			got, err := GetAPIKey(tc.headers)
 
 			// Check if we expected an error
-			if (err != ni) != tc.wantErr {
+			if (err != nil) != tc.wantErr {
 				t.Fatalf("GetAPIKey() error = %v, wantErr %v", err, tc.wantErr)
 			}
 
