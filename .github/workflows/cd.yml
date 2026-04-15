@@ -1,6 +1,18 @@
+name: cd
+
 on:
   push:
     branches: [main]
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  PROJECT_ID: uqfcc9n9299c7b27ael6
+  REGION: us-central1
+  REPO_NAME: notely-ar-repo
+  IMAGE_NAME: notely
 
 jobs:
   deploy:
@@ -18,3 +30,31 @@ jobs:
 
       - name: Build App
         run: scripts/buildprod.sh
+
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v5
+
+      - name: Build prod assets
+        run: ./scripts/buildprod
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v3
+        with:
+          project_id: ${{ env.PROJECT_ID }}
+          workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - name: Set up gcloud
+        uses: google-github-actions/setup-gcloud@v3
+        with:
+          project_id: ${{ env.PROJECT_ID }}
+
+      - name: Build and push image
+        run: |
+          gcloud builds submit \
+            --tag "${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPO_NAME}/${IMAGE_NAME}:latest" \
+            .
