@@ -51,4 +51,4 @@ jobs:
             .
 
       - name: Deploy to Cloud Run
-        run: gcloud run deploy ${IMAGE_NAME} --image ${REGION}-docker.pkg.dev/${PROJECT_IaD}/${REPO_NAME}/${IMAGE_NAME}:${TAG} --region ${REGION} --allow-unauthenticated --project ${PROJECT_ID} --max-instances=4
+        run: gcloud run deploy ${IMAGE_NAME} --image ${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPO_NAME}/${IMAGE_NAME}:${TAG} --region ${REGION} --allow-unauthenticated --project ${PROJECT_ID} --max-instances=4
