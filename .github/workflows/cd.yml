@@ -13,6 +13,7 @@ env:
   REGION: us-central1
   REPO_NAME: notely-ar-repo
   IMAGE_NAME: notely
+  TAG: latest
 
 jobs:
   deploy:
@@ -46,5 +47,8 @@ jobs:
       - name: Build and push image
         run: |
           gcloud builds submit \
-            --tag "${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPO_NAME}/${IMAGE_NAME}:latest" \
+            --tag "${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPO_NAME}/${IMAGE_NAME}:${TAG}" \
             .
+
+      - name: Deploy to Cloud Run
+        run: gcloud run deploy ${IMAGE_NAME} --image ${REGION}-docker.pkg.dev/${PROJECT_IaD}/${REPO_NAME}/${IMAGE_NAME}:${TAG} --region ${REGION} --allow-unauthenticated --project ${PROJECT_ID} --max-instances=4
