@@ -20,9 +20,15 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
 
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
     steps:
       - name: Check out code
         uses: actions/checkout@v5
+
+      - name: Set up goose
+        run: go install github.com/pressly/goose/v3/cmd/goose@latest
 
       - name: Set up Go
         uses: actions/setup-go@v6
@@ -49,6 +55,9 @@ jobs:
           gcloud builds submit \
             --tag "${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPO_NAME}/${IMAGE_NAME}:${TAG}" \
             .
+
+      - name: Run DB Migration
+        run: scripts/migrateup.sh
 
       - name: Deploy to Cloud Run
         run: gcloud run deploy ${IMAGE_NAME} --image ${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPO_NAME}/${IMAGE_NAME}:${TAG} --region ${REGION} --allow-unauthenticated --project ${PROJECT_ID} --max-instances=4
